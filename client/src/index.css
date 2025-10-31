@@ -1,0 +1,233 @@
+@import "tailwindcss";
+
+@layer components {
+  .all-\[unset\] {
+    all: unset;
+  }
+}
+:root {
+  --body-medium-font-family: "Inter", Helvetica;
+  --body-medium-font-size: 14px;
+  --body-medium-font-style: normal;
+  --body-medium-font-weight: 500;
+  --body-medium-letter-spacing: 0px;
+  --body-medium-line-height: 175%;
+  --body-regular-font-family: "Inter", Helvetica;
+  --body-regular-font-size: 14px;
+  --body-regular-font-style: normal;
+  --body-regular-font-weight: 400;
+  --body-regular-letter-spacing: 0px;
+  --body-regular-line-height: 175%;
+  --heading-h1-tight-semi-bold-font-family: "Inter", Helvetica;
+  --heading-h1-tight-semi-bold-font-size: 40px;
+  --heading-h1-tight-semi-bold-font-style: normal;
+  --heading-h1-tight-semi-bold-font-weight: 600;
+  --heading-h1-tight-semi-bold-letter-spacing: -1px;
+  --heading-h1-tight-semi-bold-line-height: 150%;
+  --heading-h2-normal-bold-font-family: "Inter", Helvetica;
+  --heading-h2-normal-bold-font-size: 32px;
+  --heading-h2-normal-bold-font-style: normal;
+  --heading-h2-normal-bold-font-weight: 700;
+  --heading-h2-normal-bold-letter-spacing: 0px;
+  --heading-h2-normal-bold-line-height: normal;
+  --heading-h2-tight-semi-bold-font-family: "Inter", Helvetica;
+  --heading-h2-tight-semi-bold-font-size: 32px;
+  --heading-h2-tight-semi-bold-font-style: normal;
+  --heading-h2-tight-semi-bold-font-weight: 600;
+  --heading-h2-tight-semi-bold-letter-spacing: -1.12px;
+  --heading-h2-tight-semi-bold-line-height: normal;
+  --heading-h3-nomal-bold-font-family: "Inter", Helvetica;
+  --heading-h3-nomal-bold-font-size: 24px;
+  --heading-h3-nomal-bold-font-style: normal;
+  --heading-h3-nomal-bold-font-weight: 700;
+  --heading-h3-nomal-bold-letter-spacing: 0px;
+  --heading-h3-nomal-bold-line-height: normal;
+  --heading-h4-normal-medium-font-family: "Inter", Helvetica;
+  --heading-h4-normal-medium-font-size: 18px;
+  --heading-h4-normal-medium-font-style: normal;
+  --heading-h4-normal-medium-font-weight: 500;
+  --heading-h4-normal-medium-letter-spacing: 0px;
+  --heading-h4-normal-medium-line-height: normal;
+  --heading-h4-normal-semibold-font-family: "Inter", Helvetica;
+  --heading-h4-normal-semibold-font-size: 18px;
+  --heading-h4-normal-semibold-font-style: normal;
+  --heading-h4-normal-semibold-font-weight: 600;
+  --heading-h4-normal-semibold-letter-spacing: 0px;
+  --heading-h4-normal-semibold-line-height: normal;
+  --heading-h5-normal-semi-bold-font-family: "Inter", Helvetica;
+  --heading-h5-normal-semi-bold-font-size: 16px;
+  --heading-h5-normal-semi-bold-font-style: normal;
+  --heading-h5-normal-semi-bold-font-weight: 600;
+  --heading-h5-normal-semi-bold-letter-spacing: 0px;
+  --heading-h5-normal-semi-bold-line-height: normal;
+  --heading-h6-medium-font-family: "Inter", Helvetica;
+  --heading-h6-medium-font-size: 14px;
+  --heading-h6-medium-font-style: normal;
+  --heading-h6-medium-font-weight: 500;
+  --heading-h6-medium-letter-spacing: 0px;
+  --heading-h6-medium-line-height: normal;
+  --label-loose-medium-font-family: "Inter", Helvetica;
+  --label-loose-medium-font-size: 12px;
+  --label-loose-medium-font-style: normal;
+  --label-loose-medium-font-weight: 500;
+  --label-loose-medium-letter-spacing: 0.6px;
+  --label-loose-medium-line-height: 24px;
+  --label-normal-medium-font-family: "Inter", Helvetica;
+  --label-normal-medium-font-size: 12px;
+  --label-normal-medium-font-style: normal;
+  --label-normal-medium-font-weight: 500;
+  --label-normal-medium-letter-spacing: 0px;
+  --label-normal-medium-line-height: 24px;
+  --neutralblackb-100: rgba(230, 231, 232, 1);
+  --neutralblackb-200: rgba(182, 183, 188, 1);
+  --neutralblackb-300: rgba(135, 138, 146, 1);
+  --neutralblackb-400: rgba(113, 116, 126, 1);
+  --neutralblackb-500: rgba(92, 95, 106, 1);
+  --neutralblackb-600: rgba(71, 75, 87, 1);
+  --neutralblackb-700: rgba(51, 56, 69, 1);
+  --neutralblackb-800: rgba(32, 37, 51, 1);
+  --neutralblackb-900: rgba(14, 20, 34, 1);
+  --neutralwhitew-100: rgba(246, 246, 246, 1);
+  --neutralwhitew-200: rgba(233, 233, 235, 1);
+  --neutralwhitew-900: rgba(255, 255, 255, 1);
+  --primaryb-100: rgba(240, 241, 255, 1);
+  --primaryb-200: rgba(227, 229, 255, 1);
+  --primaryb-300: rgba(183, 191, 255, 1);
+  --primaryb-400: rgba(168, 178, 255, 1);
+  --primaryb-500: rgba(151, 166, 255, 1);
+  --primaryb-600: rgba(134, 154, 255, 1);
+  --primaryb-700: rgba(114, 143, 255, 1);
+  --primaryb-800: rgba(92, 131, 255, 1);
+  --primaryb-900: rgba(64, 120, 255, 1);
+  --semanticblueb-100: rgba(232, 239, 253, 1);
+  --semanticblueb-200: rgba(209, 222, 251, 1);
+  --semanticblueb-300: rgba(186, 206, 250, 1);
+  --semanticblueb-400: rgba(163, 190, 248, 1);
+  --semanticblueb-500: rgba(140, 173, 246, 1);
+  --semanticblueb-600: rgba(117, 157, 244, 1);
+  --semanticblueb-700: rgba(94, 140, 243, 1);
+  --semanticblueb-800: rgba(71, 124, 241, 1);
+  --semanticblueb-900: rgba(48, 108, 239, 1);
+  --semanticgreeng-100: rgba(213, 229, 215, 1);
+  --semanticgreeng-200: rgba(193, 216, 196, 1);
+  --semanticgreeng-300: rgba(152, 190, 158, 1);
+  --semanticgreeng-400: rgba(131, 177, 139, 1);
+  --semanticgreeng-500: rgba(111, 164, 121, 1);
+  --semanticgreeng-600: rgba(90, 152, 104, 1);
+  --semanticgreeng-700: rgba(69, 139, 86, 1);
+  --semanticgreeng-800: rgba(44, 127, 69, 1);
+  --semanticgreeng-900: rgba(5, 114, 52, 1);
+  --semanticredr-100: rgba(251, 217, 208, 1);
+  --semanticredr-200: rgba(248, 197, 185, 1);
+  --semanticredr-300: rgba(238, 159, 141, 1);
+  --semanticredr-400: rgba(232, 140, 119, 1);
+  --semanticredr-500: rgba(225, 120, 98, 1);
+  --semanticredr-600: rgba(217, 100, 78, 1);
+  --semanticredr-700: rgba(209, 79, 58, 1);
+  --semanticredr-800: rgba(200, 55, 39, 1);
+  --semanticredr-900: rgba(190, 19, 19, 1);
+  --semanticyellowy-100: rgba(255, 241, 216, 1);
+  --semanticyellowy-200: rgba(255, 234, 196, 1);
+  --semanticyellowy-300: rgba(255, 220, 158, 1);
+  --semanticyellowy-400: rgba(255, 213, 138, 1);
+  --semanticyellowy-500: rgba(253, 207, 118, 1);
+  --semanticyellowy-600: rgba(251, 200, 98, 1);
+  --semanticyellowy-700: rgba(249, 193, 76, 1);
+  --semanticyellowy-800: rgba(246, 187, 51, 1);
+  --semanticyellowy-900: rgba(243, 180, 10, 1);
+  --shadow-medium: 4px 4px 4px 0px rgba(0, 0, 0, 0.05);
+  --shadow-small: 2px 2px 30px 0px rgba(0, 0, 0, 0.05);
+}
+:root {
+  --animate-spin: spin 1s linear infinite;
+}
+.animate-fade-in {
+  animation: fade-in 1s var(--animation-delay, 0s) ease forwards;
+}
+.animate-fade-up {
+  animation: fade-up 1s var(--animation-delay, 0s) ease forwards;
+}
+.animate-marquee {
+  animation: marquee var(--duration) infinite linear;
+}
+.animate-marquee-vertical {
+  animation: marquee-vertical var(--duration) linear infinite;
+}
+.animate-shimmer {
+  animation: shimmer 8s infinite;
+}
+.animate-spin {
+  animation: var(--animate-spin);
+}
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes image-glow {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.74, 0.25, 0.76, 1);
+  }
+
+  10% {
+    opacity: 0.7;
+    animation-timing-function: cubic-bezier(0.12, 0.01, 0.08, 0.99);
+  }
+
+  to {
+    opacity: 0.4;
+  }
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes shimmer {
+  0%,
+  90%,
+  to {
+    background-position: calc(-100% - var(--shimmer-width)) 0;
+  }
+
+  30%,
+  60% {
+    background-position: calc(100% + var(--shimmer-width)) 0;
+  }
+}
+@keyframes marquee {
+  0% {
+    transform: translate(0);
+  }
+
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+@keyframes marquee-vertical {
+  0% {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+  }
+}
