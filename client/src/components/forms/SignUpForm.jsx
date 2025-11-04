@@ -3,7 +3,6 @@ import Input from '../ui/Input';
 import Button from '../ui/Button';
 import axios from 'axios';
 
-
 const SignUpForm = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -14,6 +13,9 @@ const SignUpForm = () => {
     referralCode: '',
   });
 
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -22,18 +24,55 @@ const SignUpForm = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    setError('');
 
-  try {
-    const response = await axios.post('http://localhost:5000/api/auth/signup', formData);
-    console.log('Signup success:', response.data);
-    alert('Account created successfully!');
-  } catch (error) {
-    console.error('Signup failed:', error.response?.data || error.message);
-    alert('Signup failed! Please check your details.');
-  }
-};
+    // Validate password match on frontend
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
 
+    setLoading(true);
+
+    try {
+      // Backend expects 'phone' not 'mobile'
+      const signupData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.mobile,  // Changed from 'mobile' to 'phone'
+      };
+
+      // Only include referralCode if it has a value
+      if (formData.referralCode.trim()) {
+        signupData.referralCode = formData.referralCode;
+      }
+
+      console.log('Sending data:', signupData);
+
+      const response = await axios.post('http://localhost:5000/api/auth/signup', signupData);
+      
+      console.log('Signup success:', response.data);
+      alert('Account created successfully!');
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        mobile: '',
+        referralCode: '',
+      });
+      
+    } catch (error) {
+      console.error('Signup failed:', error.response?.data || error.message);
+      setError(error.response?.data?.message || 'Signup failed! Please check your details.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoogleSignIn = () => {
     console.log('Google Sign-In clicked');
@@ -47,9 +86,17 @@ const SignUpForm = () => {
     <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-8">Sign up</h1>
 
+      {/* Error Message */}
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
+
       {/* Google Sign In Button */}
       <button
         onClick={handleGoogleSignIn}
+        type="button"
         className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-md py-3 px-4 hover:bg-gray-50 transition mb-6"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -139,7 +186,7 @@ const SignUpForm = () => {
             htmlFor="referralCode"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Referral Code
+            Referral Code (Optional)
           </label>
           <div className="flex gap-2">
             <input
@@ -168,8 +215,8 @@ const SignUpForm = () => {
             </a>
             .
           </p>
-          <Button type="submit" fullWidth>
-            Create account
+          <Button type="submit" fullWidth disabled={loading}>
+            {loading ? 'Creating Account...' : 'Create account'}
           </Button>
         </div>
 
