@@ -1,48 +1,57 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../api/axiosInstance";
-import Input from "../ui/Input";
-import Button from "../ui/Button";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from '../../store/slices/authSlice';
+import Input from '../ui/Input';
+import Button from '../ui/Button';
+import axiosInstance from '../../api/axiosInstance.js'
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
 
     try {
-      const response = await axiosInstance.post("/auth/login", formData);
-      console.log("Login Success: ", response.data);
-      alert("Login Successful");
+      const response = await axiosInstance.post('/auth/login', formData);
 
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      console.log('Login success:', response.data);
+      
+      // Dispatch login action to Redux
+      dispatch(login(response.data.user));
+      
+      alert('Login successful!');
 
-      navigate("/");
+      // Navigate to home
+      navigate('/', { replace: true });
+
     } catch (error) {
-      console.error("Login failed: ", error.response?.data);
-      setError(
-        error.response?.data?.message || "Login failed. Please try again."
-      );
+      console.error('Login failed:', error.response?.data);
+      setError(error.response?.data?.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleSignIn = () => {
-    console.log("Google Sign-In clicked");
+    console.log('Google Sign-In clicked');
   };
 
   return (
@@ -55,7 +64,6 @@ const LoginForm = () => {
         </div>
       )}
 
-      {/* Google Sign In Button */}
       <button
         onClick={handleGoogleSignIn}
         type="button"
@@ -113,24 +121,18 @@ const LoginForm = () => {
         />
 
         <div className="flex justify-end text-sm">
-          <a
-            href="/forgot-password"
-            className="text-black underline hover:text-gray-700"
-          >
+          <a href="/forgot-password" className="text-black underline hover:text-gray-700">
             Forgot password?
           </a>
         </div>
 
         <Button type="submit" fullWidth disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
+          {loading ? 'Logging in...' : 'Login'}
         </Button>
 
         <p className="text-center text-sm text-gray-600 mt-4">
-          Don't have an account?{" "}
-          <a
-            href="/signup"
-            className="text-black underline font-medium hover:text-gray-700"
-          >
+          Don't have an account?{' '}
+          <a href="/signup" className="text-black underline font-medium hover:text-gray-700">
             Sign up
           </a>
         </p>

@@ -1,27 +1,21 @@
-import { Routes, Route } from "react-router-dom";
-import SignUp from "./pages/User/SignUp";
-import Home from "./pages/User/Home";
-import Collection from "./pages/User/Collection";
-import Product from "./pages/User/Product";
-import Cart from "./pages/User/Cart";
-import Login from "./pages/User/Login";
-import PlaceOrder from "./pages/User/PlaceOrder";
-import Orders from "./pages/User/Orders";
+import { useSelector } from 'react-redux';
+import { selectAuthLoading } from './store/slices/authSlice';
+import { useAuthInit } from './hooks/useAuthInit';
+import AppRoutes from './routes/AppRoutes';
 
 function App() {
-  return (
-    <Routes>
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/" element={<Home/>} />
-      <Route path="/collection" element={<Collection/>} />
-      <Route path="/product/:productId" element={<Product/>} />
-      <Route path="/cart" element={<Cart/>} />
-      <Route path="/place-order" element={<PlaceOrder/>} />
-      <Route path="/orders" element={<Orders/>} />
-      
-    </Routes>
-  );
+  useAuthInit();
+  const loading = useSelector(selectAuthLoading);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-xl font-semibold">Loading...</div>
+      </div>
+    );
+  }
+
+  return <AppRoutes />;
 }
 
 export default App;

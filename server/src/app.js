@@ -4,7 +4,11 @@ import connectDB from "./config/db.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+
+
 import authRoutes from "../src/routes/authRoutes.js";
+import productRoutes from "../src/routes/productRoutes.js"
+
 
 dotenv.config();
 
@@ -23,7 +27,10 @@ app.use(
   })
 );
 
+//Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes)
+
 
 app.get("/", (req, res) => {
   res.send("Server is running successfully");

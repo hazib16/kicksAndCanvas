@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { login } from '../../store/slices/authSlice';
 
 const SignUpForm = () => {
+  const dispatch= useDispatch()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -52,7 +55,7 @@ const SignUpForm = () => {
       console.log('Sending data:', signupData);
 
       const response = await axios.post('http://localhost:5000/api/auth/signup', signupData);
-      
+      dispatch(login(response.data.user))
       console.log('Signup success:', response.data);
       alert('Account created successfully!');
       
