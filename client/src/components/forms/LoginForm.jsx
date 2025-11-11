@@ -32,9 +32,9 @@ const LoginForm = () => {
     try {
       const response = await axiosInstance.post('/auth/login', formData);
 
-      console.log('Login success:', response.data);
+      // console.log('Login success:', response.data);
       
-      // Dispatch login action to Redux
+      
       dispatch(login(response.data.user));
       
       alert('Login successful!');

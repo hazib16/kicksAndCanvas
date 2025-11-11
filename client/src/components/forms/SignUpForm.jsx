@@ -30,7 +30,7 @@ const SignUpForm = () => {
     e.preventDefault();
     setError('');
 
-    // Validate password match on frontend
+    
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -39,12 +39,12 @@ const SignUpForm = () => {
     setLoading(true);
 
     try {
-      // Backend expects 'phone' not 'mobile'
+      
       const signupData = {
         name: formData.name,
         email: formData.email,
         password: formData.password,
-        phone: formData.mobile,  // Changed from 'mobile' to 'phone'
+        phone: formData.mobile,  
       };
 
       // Only include referralCode if it has a value
@@ -52,14 +52,14 @@ const SignUpForm = () => {
         signupData.referralCode = formData.referralCode;
       }
 
-      console.log('Sending data:', signupData);
+      // console.log('Sending data:', signupData);
 
       const response = await axios.post('http://localhost:5000/api/auth/signup', signupData);
       dispatch(login(response.data.user))
       console.log('Signup success:', response.data);
       alert('Account created successfully!');
       
-      // Reset form
+      
       setFormData({
         name: '',
         email: '',
@@ -89,14 +89,14 @@ const SignUpForm = () => {
     <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-8">Sign up</h1>
 
-      {/* Error Message */}
+      
       {error && (
         <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
           {error}
         </div>
       )}
 
-      {/* Google Sign In Button */}
+      
       <button
         onClick={handleGoogleSignIn}
         type="button"
@@ -132,7 +132,7 @@ const SignUpForm = () => {
         </div>
       </div>
 
-      {/* Sign Up Form */}
+      
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           label="Name"

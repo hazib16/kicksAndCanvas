@@ -15,7 +15,7 @@ const Home = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // ✅ FIXED: Use correct endpoints
+        
         const bestSellersRes = await axiosInstance.get('/products/best-sellers?limit=4');
         setBestSellers(bestSellersRes.data.products || []);
 
@@ -36,11 +36,11 @@ const Home = () => {
     <div className="min-h-screen bg-white">
       <Header />
 
-      {/* Hero Banner - IMPROVED */}
+      
       <section className="relative bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left Content */}
+            
             <div className="space-y-8">
               <div className="space-y-4">
                 <h1 className="text-6xl lg:text-7xl font-black leading-tight text-black tracking-tight">
@@ -76,7 +76,7 @@ const Home = () => {
               </div>
             </div>
 
-            {/* Right Image - Nike Banner */}
+            
             <div className="flex justify-center lg:justify-end relative">
               <div className="relative w-full max-w-xl overflow-hidden rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300">
                 <div className="absolute inset-0 bg-gradient-to-br from-black/10 to-transparent z-10 rounded-2xl"></div>
@@ -90,11 +90,11 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Decorative Elements */}
+        
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-gray-100 rounded-full opacity-30 blur-3xl"></div>
       </section>
 
-      {/* Features Section - IMPROVED */}
+      {/* Features Section */}
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -146,7 +146,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Best Selling Section - Dynamic */}
+      {/* Best Selling Section */}
       {loading ? (
         <div className="max-w-7xl mx-auto px-4 py-24 text-center">
           <div className="inline-block">
@@ -162,7 +162,7 @@ const Home = () => {
         />
       )}
 
-      {/* Featured Banner - IMPROVED */}
+      {/* Featured Banner */}
       <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white py-24 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
@@ -172,7 +172,7 @@ const Home = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Left Content */}
+            
             <div className="space-y-8">
               <div className="space-y-4">
                 <p className="text-sm font-semibold tracking-widest text-gray-400 uppercase">New Collection</p>
@@ -222,7 +222,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* New Arrivals Section - Dynamic */}
+      {/* New Arrivals Section */}
       {!loading && (
         <ProductSection
           label="NEW COLLECTION"
@@ -232,7 +232,7 @@ const Home = () => {
         />
       )}
 
-      {/* Newsletter Section - IMPROVED */}
+      {/* Newsletter Section */}
       <section className="relative bg-white py-24">
         <div className="absolute inset-0 opacity-5 bg-gradient-to-r from-black via-transparent to-black"></div>
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

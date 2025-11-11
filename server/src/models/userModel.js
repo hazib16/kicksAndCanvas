@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: 6,
-      select: false, // Don't send password in queries by default
+      select: false, 
     },
     phone: {
       type: String,

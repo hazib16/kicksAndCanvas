@@ -40,7 +40,7 @@ const Header = () => {
 
   return (
     <>
-      {/* Promotional Banner */}
+      
       <div className="bg-black text-white text-center py-2 text-sm">
         Get 25% OFF on your first order.{' '}
         <span className="underline cursor-pointer">Order Now</span>
@@ -62,7 +62,7 @@ const Header = () => {
               />
             </div>
 
-            {/* Navigation Links */}
+            
             <div className="hidden md:flex space-x-8">
               <a href="/" className="text-gray-700 hover:text-black font-medium transition-colors">
                 Home
@@ -80,7 +80,7 @@ const Header = () => {
 
             {/* Icons - Right Side */}
             <div className="flex items-center space-x-4">
-              {/* Search Icon - Show on all pages except auth pages */}
+              
               {!isAuthPage && (
                 <button className="text-gray-700 hover:text-black transition-colors p-2 hover:bg-gray-100 rounded-lg">
                   <svg
@@ -99,7 +99,7 @@ const Header = () => {
                 </button>
               )}
 
-              {/* Cart Icon - Show only when logged in and not on auth pages */}
+              
               {isAuthenticated && !isAuthPage && (
                 <button 
                   onClick={() => navigate('/cart')}
@@ -121,7 +121,7 @@ const Header = () => {
                 </button>
               )}
 
-              {/* User Profile Dropdown - Click-based */}
+              {/* User Profile Dropdown */}
               {isAuthenticated && !isAuthPage && (
                 <div className="relative" ref={dropdownRef}>
                   {/* Profile Button */}
@@ -147,7 +147,7 @@ const Header = () => {
                   {/* Dropdown Menu */}
                   {isDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border-2 border-gray-200 rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
-                      {/* User Greeting */}
+                      
                       <div className="bg-gray-50 px-5 py-4 border-b border-gray-200">
                         <p className="text-sm font-semibold text-gray-900">
                           Hi, {user?.name || 'User'}
@@ -157,7 +157,7 @@ const Header = () => {
                         </p>
                       </div>
 
-                      {/* Menu Items */}
+                      
                       <div className="py-2">
                         {/* My Profile */}
                         <button
@@ -184,7 +184,7 @@ const Header = () => {
                         {/* Divider */}
                         <div className="border-t border-gray-200 my-2"></div>
 
-                        {/* Logout - Red */}
+                        {/* Logout */}
                         <button
                           onClick={handleLogout}
                           className="w-full text-left px-5 py-3 text-red-600 hover:bg-red-50 transition-colors font-semibold text-sm"
@@ -197,25 +197,8 @@ const Header = () => {
                 </div>
               )}
 
-              {/* Login/Signup Buttons - Show only when NOT logged in */}
-              {!isAuthenticated && !isAuthPage && (
-                <div className="flex items-center space-x-2 gap-2">
-                  <button
-                    onClick={() => navigate('/login')}
-                    className="px-4 py-2 text-gray-700 hover:text-black font-medium transition-colors text-sm"
-                  >
-                    Login
-                  </button>
-                  <button
-                    onClick={() => navigate('/signup')}
-                    className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 font-medium text-sm shadow-md hover:shadow-lg"
-                  >
-                    Sign Up
-                  </button>
-                </div>
-              )}
 
-              {/* On Auth Pages - Show opposite action */}
+              {/* On Auth Pages */}
               {!isAuthenticated && isAuthPage && (
                 <button
                   onClick={() => navigate(location.pathname === '/login' ? '/signup' : '/login')}

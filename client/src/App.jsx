@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { selectAuthLoading } from './store/slices/authSlice';
 import { useAuthInit } from './hooks/useAuthInit';
-import AppRoutes from './routes/AppRoutes';
+import AppRoutes from './routes/appRoutes.jsx'
 
 function App() {
   useAuthInit();
