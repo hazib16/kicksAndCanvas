@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken"
+import { verifyAccessToken } from "../utils/tokenUtils.js"
 
 export const authMiddleware= (req,res,next)=>{
     try {
-        const token = req.cookies.token || req.header.authorization?.split(" ")[1]
+        const token = req.cookies.accessToken || req.header.authorization?.split(" ")[1]
 
         if(!token){
             return res.status(401).json({
@@ -10,7 +11,7 @@ export const authMiddleware= (req,res,next)=>{
                 message: "Unauthorized - No token provided",
             })
         }
-        const decoded= jwt.verify(token, process.env.JWT_SECRET)
+        const decoded= verifyAccessToken(token)
         req.user= decoded
         next()
     } catch (error) {

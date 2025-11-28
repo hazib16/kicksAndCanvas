@@ -4,8 +4,15 @@ import AdminDashboard from '../../pages/Admin/Dashboard.jsx';
 import ProductManagement from '../../pages/Admin/ProductManagement';
 import OrderManagement from '../../pages/Admin/OrderManagement';
 import UserManagement from '../../pages/Admin/UserManagement';
+import AdminLoginForm from '../../pages/Admin/AdminLogin.jsx';
 
 export const adminRoutes = [
+  <Route
+  key="admin-login"
+  path='/admin/login'
+  element={<AdminLoginForm/>}
+  />,
+
   <Route 
     key="admin-dashboard"
     path="/admin" 

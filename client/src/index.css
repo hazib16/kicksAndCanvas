@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+/* ========== FORCE DISABLE TEXT SELECTION ========== */
+
+/* Apply to everything */
+* {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Allow selection only where needed */
+input,
+textarea,
+[contenteditable="true"],
+p,
+span {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+/* Prevent image dragging */
+img {
+  -webkit-user-drag: none !important;
+  /* user-drag: none !important; */
+  pointer-events: auto !important;
+}

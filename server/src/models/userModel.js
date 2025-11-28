@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: 6,
-      select: false, 
+      select: false,
     },
     phone: {
       type: String,
@@ -45,6 +45,23 @@ const userSchema = new mongoose.Schema(
     lastLogin: {
       type: Date,
       default: null,
+    },
+    refreshToken: {
+      type: String,
+      default: null,
+      select: false, // Don't send in queries
+    },
+    otp: {
+      type: String,
+      select: false, // security: don't expose by default
+    },
+    otpExpires: {
+      type: Date,
+      select: false,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

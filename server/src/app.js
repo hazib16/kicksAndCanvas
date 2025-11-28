@@ -1,16 +1,14 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+
+import express from "express";
 import connectDB from "./config/db.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 
-
-import authRoutes from "../src/routes/authRoutes.js";
-import productRoutes from "../src/routes/productRoutes.js"
-
-
-dotenv.config();
+import authRoutes from "./routes/authRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 
 const app = express();
 
@@ -27,14 +25,9 @@ app.use(
   })
 );
 
-//Routes
+// Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/products", productRoutes)
-
-
-app.get("/", (req, res) => {
-  res.send("Server is running successfully");
-});
+app.use("/api/products", productRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

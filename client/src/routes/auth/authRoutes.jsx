@@ -2,7 +2,9 @@ import { Route } from 'react-router-dom';
 import PublicRoute from '../PublicRoute';
 import Login from '../../pages/User/Login';
 import SignUp from '../../pages/User/SignUp';
+import VerifySignupOTP from '../../pages/User/VerifySignupOTP';
 import ForgotPassword from '../../pages/User/ForgotPassword';
+import VerifyPasswordResetOTP from '../../pages/User/VerifyPasswordResetOTP';
 import ResetPassword from '../../pages/User/ResetPassword';
 
 export const authRoutes = [
@@ -25,6 +27,16 @@ export const authRoutes = [
       </PublicRoute>
     } 
   />,
+
+  <Route 
+    key="verify-signup-otp"
+    path="/verify-signup-otp" 
+    element={
+      <PublicRoute>
+        <VerifySignupOTP />
+      </PublicRoute>
+    } 
+  />,
   
   <Route 
     key="forgot-password"
@@ -32,6 +44,16 @@ export const authRoutes = [
     element={
       <PublicRoute>
         <ForgotPassword />
+      </PublicRoute>
+    } 
+  />,
+
+  <Route 
+    key="verify-reset-otp"
+    path="/verify-reset-otp" 
+    element={
+      <PublicRoute>
+        <VerifyPasswordResetOTP />
       </PublicRoute>
     } 
   />,

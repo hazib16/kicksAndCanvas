@@ -1,102 +1,71 @@
-import React, { useState } from 'react';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
-import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { login } from '../../store/slices/authSlice';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signupSchema } from "../../validators/authValidators";
+import {
+  signupUserThunk,
+  selectAuthLoading,
+  selectAuthError,
+  selectOtpPhase,
+} from "../../store/slices/authSlice";
+import Input from "../ui/Input";
+import Button from "../ui/Button";
 
 const SignUpForm = () => {
-  const dispatch= useDispatch()
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    mobile: '',
-    referralCode: '',
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Redux selectors
+  const loading = useSelector(selectAuthLoading);
+  const error = useSelector(selectAuthError);
+  const otpPhase = useSelector(selectOtpPhase);
+
+  // React Hook Form with Zod validation
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      phone: "",
+      referralCode: "",
+    },
   });
 
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-
-    
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
+  // Navigate to OTP page after signup succeeds
+  useEffect(() => {
+    if (otpPhase) {
+      navigate("/verify-signup-otp");
     }
+  }, [otpPhase, navigate]);
 
-    setLoading(true);
-
-    try {
-      
-      const signupData = {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.mobile,  
-      };
-
-      // Only include referralCode if it has a value
-      if (formData.referralCode.trim()) {
-        signupData.referralCode = formData.referralCode;
-      }
-
-      // console.log('Sending data:', signupData);
-
-      const response = await axios.post('http://localhost:5000/api/auth/signup', signupData);
-      dispatch(login(response.data.user))
-      console.log('Signup success:', response.data);
-      alert('Account created successfully!');
-      
-      
-      setFormData({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        mobile: '',
-        referralCode: '',
-      });
-      
-    } catch (error) {
-      console.error('Signup failed:', error.response?.data || error.message);
-      setError(error.response?.data?.message || 'Signup failed! Please check your details.');
-    } finally {
-      setLoading(false);
-    }
+  const onSubmit = (data) => {
+    const { confirmPassword, ...signupData } = data;
+    dispatch(signupUserThunk(signupData));
   };
 
   const handleGoogleSignIn = () => {
-    console.log('Google Sign-In clicked');
-  };
-
-  const applyReferralCode = () => {
-    console.log('Referral code:', formData.referralCode);
+    console.log("Google Sign-In clicked");
   };
 
   return (
     <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-8">Sign up</h1>
 
-      
       {error && (
         <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
           {error}
         </div>
       )}
 
-      
       <button
         onClick={handleGoogleSignIn}
         type="button"
@@ -132,56 +101,45 @@ const SignUpForm = () => {
         </div>
       </div>
 
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Input
           label="Name"
           type="text"
           id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
+          {...register("name")}
+          error={errors.name?.message}
         />
 
         <Input
           label="Email"
           type="email"
           id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
+          {...register("email")}
+          error={errors.email?.message}
         />
 
         <Input
           label="Password"
           type="password"
           id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
+          {...register("password")}
+          error={errors.password?.message}
         />
 
         <Input
           label="Confirm Password"
           type="password"
           id="confirmPassword"
-          name="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
+          {...register("confirmPassword")}
+          error={errors.confirmPassword?.message}
         />
 
         <Input
-          label="Mobile"
+          label="Phone"
           type="tel"
-          id="mobile"
-          name="mobile"
-          value={formData.mobile}
-          onChange={handleChange}
-          required
+          id="phone"
+          {...register("phone")}
+          error={errors.phone?.message}
         />
 
         <div>
@@ -191,40 +149,38 @@ const SignUpForm = () => {
           >
             Referral Code (Optional)
           </label>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              id="referralCode"
-              name="referralCode"
-              value={formData.referralCode}
-              onChange={handleChange}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent outline-none"
-            />
-            <Button type="button" onClick={applyReferralCode}>
-              Apply Code
-            </Button>
-          </div>
+          <input
+            type="text"
+            id="referralCode"
+            {...register("referralCode")}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent outline-none"
+          />
+          {errors.referralCode && (
+            <p className="mt-1 text-sm text-red-600">
+              {errors.referralCode.message}
+            </p>
+          )}
         </div>
 
         <div className="pt-2">
           <p className="text-xs text-gray-600 mb-4">
-            By Creating An Account You Agree With Our{' '}
+            By Creating An Account You Agree With Our{" "}
             <a href="/terms" className="text-black underline">
               Terms Of Service
             </a>
-            ,{' '}
+            ,{" "}
             <a href="/privacy" className="text-black underline">
               Privacy Policy
             </a>
             .
           </p>
-          <Button type="submit" fullWidth disabled={loading}>
-            {loading ? 'Creating Account...' : 'Create account'}
+          <Button type="submit" fullWidth disabled={loading || isSubmitting}>
+            {loading || isSubmitting ? "Creating Account..." : "Create account"}
           </Button>
         </div>
 
         <p className="text-center text-sm text-gray-600 mt-4">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <a href="/login" className="text-black underline font-medium">
             Log in
           </a>
