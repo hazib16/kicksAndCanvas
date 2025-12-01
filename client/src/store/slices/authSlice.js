@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../api/axiosInstance";
+import toast from 'react-hot-toast'; // 
 
 // Try loading user from localStorage on app start
 const userFromStorage = localStorage.getItem("user")
@@ -74,6 +75,19 @@ export const resendOtpThunk = createAsyncThunk(
   }
 );
 
+// Async thunk: logout (NEW - with API call)
+export const logoutUserThunk = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await axiosInstance.post("/auth/logout");
+      return null;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Logout failed");
+    }
+  }
+);
+
 // Async thunk: fetch current user (for session on refresh)
 export const fetchCurrentUserThunk = createAsyncThunk(
   "auth/fetchCurrentUser",
@@ -130,6 +144,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.loading = false;
       localStorage.removeItem("user");
+      toast.success("Logged out successfully"); // ← Add toast
     },
     setLoading: (state, action) => {
       state.loading = action.payload;
@@ -148,6 +163,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = null;
         localStorage.setItem("user", JSON.stringify(action.payload));
+        toast.success(`Welcome back, ${action.payload.name}!`); // ← Add toast
       })
       .addCase(loginUserThunk.rejected, (state, action) => {
         state.user = null;
@@ -155,6 +171,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         localStorage.removeItem("user");
+        toast.error(action.payload || "Login failed"); // ← Add toast
       })
 
       // Signup - DO NOT authenticate yet
@@ -167,7 +184,7 @@ const authSlice = createSlice({
         state.error = null;
         state.otpPhase = true;
         state.userIdForOtp = action.payload.userId;
-        // User NOT authenticated yet - needs OTP verification
+        toast.success("OTP sent to your email. Please verify to continue."); // ← Add toast
       })
       .addCase(signupUserThunk.rejected, (state, action) => {
         state.user = null;
@@ -176,6 +193,7 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.otpPhase = false;
         state.userIdForOtp = null;
+        toast.error(action.payload || "Signup failed"); // ← Add toast
       })
 
       // OTP verify - Authenticate ONLY after successful verification
@@ -189,12 +207,14 @@ const authSlice = createSlice({
         state.otpPhase = false;
         state.userIdForOtp = null;
         state.user = action.payload.user;
-        state.isAuthenticated = true; // ✅ Authenticated ONLY here
+        state.isAuthenticated = true;
         localStorage.setItem("user", JSON.stringify(action.payload.user));
+        toast.success("Account verified successfully! Welcome!"); // ← Add toast
       })
       .addCase(verifyOtpThunk.rejected, (state, action) => {
         state.loading = false;
         state.otpError = action.payload;
+        toast.error(action.payload || "Invalid or expired OTP"); // ← Add toast
       })
 
       // Resend OTP
@@ -205,11 +225,33 @@ const authSlice = createSlice({
       .addCase(resendOtpThunk.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        // OTP resent successfully, user stays in otpPhase
+        toast.success("New OTP sent to your email!"); // ← Add toast
       })
       .addCase(resendOtpThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        toast.error(action.payload || "Failed to resend OTP"); // ← Add toast
+      })
+
+      // Logout thunk (NEW)
+      .addCase(logoutUserThunk.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logoutUserThunk.fulfilled, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.error = null;
+        localStorage.removeItem("user");
+        toast.success("Logged out successfully"); // ← Add toast
+      })
+      .addCase(logoutUserThunk.rejected, (state, action) => {
+        // Even if API fails, still log out locally
+        state.user = null;
+        state.isAuthenticated = false;
+        state.loading = false;
+        localStorage.removeItem("user");
+        toast.error("Logout failed, but you've been logged out locally"); // ← Add toast
       })
 
       // Fetch current user
@@ -242,6 +284,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = null;
         localStorage.setItem("user", JSON.stringify(action.payload));
+        toast.success(`Welcome, ${action.payload.name}!`); // ← Add toast
       })
       .addCase(adminLoginThunk.rejected, (state, action) => {
         state.user = null;
@@ -249,6 +292,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         localStorage.removeItem("user");
+        toast.error(action.payload || "Admin login failed"); // ← Add toast
       });
   },
 });
