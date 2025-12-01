@@ -74,15 +74,14 @@ const LoginForm = () => {
 
       {/* Google Sign-In Button */}
       <div className="mb-6">
-        <GoogleLogin
-          onSuccess={handleGoogleSuccess}
-          onError={handleGoogleError}
-          useOneTap
-          theme="outline"
-          size="large"
-          width="100%"
-        />
-      </div>
+  <GoogleLogin
+    onSuccess={handleGoogleSuccess}
+    onError={handleGoogleError}
+    useOneTap
+    theme="outline"
+    size="large"
+  />
+</div>
 
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center">

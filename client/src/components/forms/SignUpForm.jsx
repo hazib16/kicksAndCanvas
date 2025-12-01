@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin } from "@react-oauth/google";
 import { signupSchema } from "../../validators/authValidators";
 import {
   signupUserThunk,
@@ -80,7 +80,6 @@ const SignUpForm = () => {
           onError={handleGoogleError}
           theme="outline"
           size="large"
-          width="100%"
           text="signup_with"
         />
       </div>

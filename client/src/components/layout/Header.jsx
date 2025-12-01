@@ -1,13 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { logout, selectUser, selectIsAuthenticated } from '../../store/slices/authSlice';
+import { logoutUserThunk, selectUser, selectIsAuthenticated } from '../../store/slices/authSlice';
+import ConfirmationModal from '../ui/ConfirmationModal'; // ← Add import
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false); // ← Add state
   const dropdownRef = useRef(null);
   
   const user = useSelector(selectUser);
@@ -15,15 +17,16 @@ const Header = () => {
 
   const isAuthPage = ['/login', '/signup', '/forgot-password'].includes(location.pathname);
 
-  const handleLogout = async () => {
-    try {
-      dispatch(logout());
-      navigate('/login', { replace: true });
-      setIsDropdownOpen(false);
-      alert('Logged out successfully!');
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
+  // Updated logout handler - shows confirmation modal
+  const handleLogoutClick = () => {
+    setIsDropdownOpen(false);
+    setShowLogoutModal(true); // ← Show modal instead of alert
+  };
+
+  // Actual logout after confirmation
+  const handleLogoutConfirm = () => {
+    dispatch(logoutUserThunk());
+    navigate('/login', { replace: true });
   };
 
   // Close dropdown when clicking outside
@@ -40,7 +43,7 @@ const Header = () => {
 
   return (
     <>
-      
+      {/* Promo Banner */}
       <div className="bg-black text-white text-center py-2 text-sm">
         Get 25% OFF on your first order.{' '}
         <span className="underline cursor-pointer">Order Now</span>
@@ -62,7 +65,7 @@ const Header = () => {
               />
             </div>
 
-            
+            {/* Navigation Links */}
             <div className="hidden md:flex space-x-8">
               <a href="/" className="text-gray-700 hover:text-black font-medium transition-colors">
                 Home
@@ -80,7 +83,7 @@ const Header = () => {
 
             {/* Icons - Right Side */}
             <div className="flex items-center space-x-4">
-              
+              {/* Search Icon */}
               {!isAuthPage && (
                 <button className="text-gray-700 hover:text-black transition-colors p-2 hover:bg-gray-100 rounded-lg">
                   <svg
@@ -99,7 +102,7 @@ const Header = () => {
                 </button>
               )}
 
-              
+              {/* Cart Icon */}
               {isAuthenticated && !isAuthPage && (
                 <button 
                   onClick={() => navigate('/cart')}
@@ -147,7 +150,7 @@ const Header = () => {
                   {/* Dropdown Menu */}
                   {isDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border-2 border-gray-200 rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
-                      
+                      {/* User Info */}
                       <div className="bg-gray-50 px-5 py-4 border-b border-gray-200">
                         <p className="text-sm font-semibold text-gray-900">
                           Hi, {user?.name || 'User'}
@@ -157,7 +160,7 @@ const Header = () => {
                         </p>
                       </div>
 
-                      
+                      {/* Menu Items */}
                       <div className="py-2">
                         {/* My Profile */}
                         <button
@@ -184,9 +187,9 @@ const Header = () => {
                         {/* Divider */}
                         <div className="border-t border-gray-200 my-2"></div>
 
-                        {/* Logout */}
+                        {/* Logout - Updated to show modal */}
                         <button
-                          onClick={handleLogout}
+                          onClick={handleLogoutClick}
                           className="w-full text-left px-5 py-3 text-red-600 hover:bg-red-50 transition-colors font-semibold text-sm"
                         >
                           Logout
@@ -197,8 +200,7 @@ const Header = () => {
                 </div>
               )}
 
-
-              {/* On Auth Pages */}
+              {/* On Auth Pages - Login/Signup Toggle */}
               {!isAuthenticated && isAuthPage && (
                 <button
                   onClick={() => navigate(location.pathname === '/login' ? '/signup' : '/login')}
@@ -211,6 +213,18 @@ const Header = () => {
           </div>
         </div>
       </nav>
+
+      {/* Logout Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogoutConfirm}
+        title="Confirm Logout"
+        message="Are you sure you want to logout? You'll need to login again to access your account."
+        confirmText="Logout"
+        cancelText="Stay Logged In"
+        type="danger"
+      />
     </>
   );
 };
