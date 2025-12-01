@@ -6,6 +6,7 @@ import VerifySignupOTP from '../../pages/User/VerifySignupOTP';
 import ForgotPassword from '../../pages/User/ForgotPassword';
 import VerifyPasswordResetOTP from '../../pages/User/VerifyPasswordResetOTP';
 import ResetPassword from '../../pages/User/ResetPassword';
+import GoogleAuthSuccess from '../../pages/User/GoogleAuthSuccess';
 
 export const authRoutes = [
   <Route 
@@ -64,6 +65,16 @@ export const authRoutes = [
     element={
       <PublicRoute>
         <ResetPassword />
+      </PublicRoute>
+    } 
+  />,
+
+  <Route 
+    key="google-auth-success"
+    path="/auth/google/success" 
+    element={
+      <PublicRoute>
+        <GoogleAuthSuccess />
       </PublicRoute>
     } 
   />,

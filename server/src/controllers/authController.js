@@ -1,11 +1,14 @@
-import { success } from "zod";
 import User from "../models/userModel.js";
 import transporter from "../utils/email.js";
+import { OAuth2Client } from 'google-auth-library'; // ← Add this import
 import {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
 } from "../utils/tokenUtils.js";
+
+// Initialize Google OAuth client
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID); // ← Add this
 
 ///signup
 export const registerUser = async (req, res) => {
@@ -262,6 +265,105 @@ export const loginUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error during login",
+    });
+  }
+};
+
+// ========== GOOGLE SIGN-IN ========== (NEW FUNCTION)
+export const googleSignIn = async (req, res) => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({
+        success: false,
+        message: "Google credential is required",
+      });
+    }
+
+    // Verify Google token
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture } = payload;
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // User exists - update Google ID and avatar if not set
+      if (!user.googleId) {
+        user.googleId = googleId;
+        user.avatar = picture;
+        user.isVerified = true;
+        await user.save();
+      }
+    } else {
+      // Create new user from Google data
+      const generatedReferral = Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
+
+      user = new User({
+        name,
+        email,
+        googleId,
+        avatar: picture,
+        isVerified: true, // Google accounts are pre-verified
+        referralCode: generatedReferral,
+        role: "user",
+        // No password needed for Google auth
+      });
+
+      await user.save();
+    }
+
+    // Generate tokens
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    user.refreshToken = refreshToken;
+    user.lastLogin = new Date();
+    await user.save();
+
+    // Set cookies
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Google sign-in successful",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+      },
+      accessToken,
+      refreshToken,
+    });
+  } catch (error) {
+    console.error("Google Sign-In Error:", error);
+    res.status(401).json({
+      success: false,
+      message: "Google authentication failed",
+      error: error.message,
     });
   }
 };

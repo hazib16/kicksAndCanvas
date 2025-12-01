@@ -16,14 +16,23 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: false, // ← Changed: Not required for Google auth
       minlength: 6,
       select: false,
     },
     phone: {
       type: String,
-      required: [true, "Phone number is required"],
+      required: false, // ← Changed: Not required for Google auth
       trim: true,
+    },
+    googleId: { // ← Added: Store Google user ID
+      type: String,
+      unique: true,
+      sparse: true, // Allows null values to be non-unique
+    },
+    avatar: { // ← Added: Store profile picture URL
+      type: String,
+      default: "",
     },
     role: {
       type: String,
@@ -49,11 +58,11 @@ const userSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
       default: null,
-      select: false, // Don't send in queries
+      select: false,
     },
     otp: {
       type: String,
-      select: false, // security: don't expose by default
+      select: false,
     },
     otpExpires: {
       type: Date,
@@ -67,9 +76,11 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Hash password before saving (only if password exists and is modified)
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    next();
+  // ← Updated: Check if password exists before hashing
+  if (!this.isModified("password") || !this.password) {
+    return next();
   }
 
   try {
@@ -81,13 +92,22 @@ userSchema.pre("save", async function (next) {
   }
 });
 
+// Compare password method (with safety check)
 userSchema.methods.comparePassword = async function (candidatePassword) {
+  // ← Updated: Return false if no password set (Google auth users)
+  if (!this.password) {
+    return false;
+  }
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// Remove sensitive fields from JSON responses
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
+  delete obj.refreshToken;
+  delete obj.otp;
+  delete obj.otpExpires;
   return obj;
 };
 

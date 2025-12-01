@@ -1,10 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../api/axiosInstance";
+import toast from 'react-hot-toast';
+
 
 // Try loading user from localStorage on app start
 const userFromStorage = localStorage.getItem("user")
   ? JSON.parse(localStorage.getItem("user"))
   : null;
+
 
 const initialState = {
   user: userFromStorage,
@@ -16,7 +19,9 @@ const initialState = {
   otpError: null,
 };
 
+
 // ====== ASYNC THUNKS ======
+
 
 // Async thunk: login
 export const loginUserThunk = createAsyncThunk(
@@ -31,6 +36,7 @@ export const loginUserThunk = createAsyncThunk(
   }
 );
 
+
 // Async thunk: signup
 export const signupUserThunk = createAsyncThunk(
   "auth/signupUser",
@@ -43,6 +49,26 @@ export const signupUserThunk = createAsyncThunk(
     }
   }
 );
+
+
+// Async thunk: Google OAuth
+export const googleAuthThunk = createAsyncThunk(
+  "auth/googleAuth",
+  async (credentialResponse, { rejectWithValue }) => {
+    try {
+      // Send Google credential token to backend
+      const res = await axiosInstance.post("/auth/google-signin", {
+        credential: credentialResponse.credential,
+      });
+      return res.data.user;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Google authentication failed"
+      );
+    }
+  }
+);
+
 
 // Async thunk: verify otp
 export const verifyOtpThunk = createAsyncThunk(
@@ -59,6 +85,7 @@ export const verifyOtpThunk = createAsyncThunk(
   }
 );
 
+
 // Async thunk: resend otp
 export const resendOtpThunk = createAsyncThunk(
   "auth/resendOtp",
@@ -74,6 +101,21 @@ export const resendOtpThunk = createAsyncThunk(
   }
 );
 
+
+// Async thunk: logout (NEW - with API call)
+export const logoutUserThunk = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await axiosInstance.post("/auth/logout");
+      return null;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Logout failed");
+    }
+  }
+);
+
+
 // Async thunk: fetch current user (for session on refresh)
 export const fetchCurrentUserThunk = createAsyncThunk(
   "auth/fetchCurrentUser",
@@ -86,6 +128,7 @@ export const fetchCurrentUserThunk = createAsyncThunk(
     }
   }
 );
+
 
 // Async thunk: admin login
 export const adminLoginThunk = createAsyncThunk(
@@ -104,6 +147,7 @@ export const adminLoginThunk = createAsyncThunk(
     }
   }
 );
+
 
 const authSlice = createSlice({
   name: "auth",
@@ -130,6 +174,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.loading = false;
       localStorage.removeItem("user");
+      toast.success("Logged out successfully");
     },
     setLoading: (state, action) => {
       state.loading = action.payload;
@@ -148,6 +193,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = null;
         localStorage.setItem("user", JSON.stringify(action.payload));
+        toast.success(`Welcome back, ${action.payload.name}!`);
       })
       .addCase(loginUserThunk.rejected, (state, action) => {
         state.user = null;
@@ -155,7 +201,9 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         localStorage.removeItem("user");
+        toast.error(action.payload || "Login failed");
       })
+
 
       // Signup - DO NOT authenticate yet
       .addCase(signupUserThunk.pending, (state) => {
@@ -167,7 +215,7 @@ const authSlice = createSlice({
         state.error = null;
         state.otpPhase = true;
         state.userIdForOtp = action.payload.userId;
-        // User NOT authenticated yet - needs OTP verification
+        toast.success("OTP sent to your email. Please verify to continue.");
       })
       .addCase(signupUserThunk.rejected, (state, action) => {
         state.user = null;
@@ -176,7 +224,32 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.otpPhase = false;
         state.userIdForOtp = null;
+        toast.error(action.payload || "Signup failed");
       })
+
+
+      // Google OAuth
+      .addCase(googleAuthThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(googleAuthThunk.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.loading = false;
+        state.error = null;
+        localStorage.setItem("user", JSON.stringify(action.payload));
+        toast.success(`Welcome, ${action.payload.name}!`);
+      })
+      .addCase(googleAuthThunk.rejected, (state, action) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.error = action.payload;
+        localStorage.removeItem("user");
+        toast.error(action.payload || "Google authentication failed");
+      })
+
 
       // OTP verify - Authenticate ONLY after successful verification
       .addCase(verifyOtpThunk.pending, (state) => {
@@ -191,11 +264,14 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.isAuthenticated = true; // ✅ Authenticated ONLY here
         localStorage.setItem("user", JSON.stringify(action.payload.user));
+        toast.success("Account verified successfully! Welcome!");
       })
       .addCase(verifyOtpThunk.rejected, (state, action) => {
         state.loading = false;
         state.otpError = action.payload;
+        toast.error(action.payload || "Invalid or expired OTP");
       })
+
 
       // Resend OTP
       .addCase(resendOtpThunk.pending, (state) => {
@@ -205,12 +281,36 @@ const authSlice = createSlice({
       .addCase(resendOtpThunk.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        // OTP resent successfully, user stays in otpPhase
+        toast.success("New OTP sent to your email!");
       })
       .addCase(resendOtpThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        toast.error(action.payload || "Failed to resend OTP");
       })
+
+
+      // Logout thunk
+      .addCase(logoutUserThunk.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logoutUserThunk.fulfilled, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.error = null;
+        localStorage.removeItem("user");
+        toast.success("Logged out successfully");
+      })
+      .addCase(logoutUserThunk.rejected, (state, action) => {
+        // Even if API fails, still log out locally
+        state.user = null;
+        state.isAuthenticated = false;
+        state.loading = false;
+        localStorage.removeItem("user");
+        toast.error("Logout failed, but you've been logged out locally");
+      })
+
 
       // Fetch current user
       .addCase(fetchCurrentUserThunk.pending, (state) => {
@@ -231,6 +331,7 @@ const authSlice = createSlice({
         localStorage.removeItem("user");
       })
 
+
       // Admin login
       .addCase(adminLoginThunk.pending, (state) => {
         state.loading = true;
@@ -242,6 +343,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = null;
         localStorage.setItem("user", JSON.stringify(action.payload));
+        toast.success(`Welcome, ${action.payload.name}!`);
       })
       .addCase(adminLoginThunk.rejected, (state, action) => {
         state.user = null;
@@ -249,13 +351,16 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         localStorage.removeItem("user");
+        toast.error(action.payload || "Admin login failed");
       });
   },
 });
 
+
 // Actions
 export const { setUser, login, logout, setLoading } = authSlice.actions;
 export default authSlice.reducer;
+
 
 // Selectors
 export const selectUser = (state) => state.auth.user;

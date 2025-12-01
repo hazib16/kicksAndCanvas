@@ -2,6 +2,7 @@ import express from "express";
 import {
   adminLogin,
   getCurrentUser,
+  googleSignIn,
   loginUser,
   logoutUser,
   refreshAccessToken,
@@ -27,5 +28,8 @@ router.post("/admin-login", validate(adminLoginSchema), adminLogin);
 router.post("/refresh", refreshAccessToken)
 router.post("/logout",authMiddleware, logoutUser);
 router.get("/me", authMiddleware, getCurrentUser);
+
+// Google OAuth route
+router.post("/google-signin", googleSignIn)
 
 export default router;
