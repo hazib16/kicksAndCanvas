@@ -44,7 +44,7 @@ const Home = () => {
             <div className="space-y-8">
               <div className="space-y-4">
                 <h1 className="text-6xl lg:text-7xl font-black leading-tight text-black tracking-tight">
-                  Fresh Arrivals <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600">Online</span>
+                  Fresh Arrivals <span className="text-transparent bg-clip-text bg-linear-to-r from-gray-900 to-gray-600">Online</span>
                 </h1>
                 <div className="w-16 h-1 bg-black rounded-full"></div>
               </div>
@@ -79,7 +79,7 @@ const Home = () => {
             
             <div className="flex justify-center lg:justify-end relative">
               <div className="relative w-full max-w-xl overflow-hidden rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300">
-                <div className="absolute inset-0 bg-gradient-to-br from-black/10 to-transparent z-10 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-linear-to-br from-black/10 to-transparent z-10 rounded-2xl"></div>
                 <img
                   src="/src/assets/banner3.jpg"
                   alt="Outta Here - Nike Campaign"
@@ -163,7 +163,7 @@ const Home = () => {
       )}
 
       {/* Featured Banner */}
-      <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white py-24 relative overflow-hidden">
+      <section className="bg-linear-to-br from-gray-900 via-gray-800 to-black text-white py-24 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay blur-3xl"></div>
@@ -210,7 +210,7 @@ const Home = () => {
             {/* Right Image - New Balance */}
             <div className="flex justify-center lg:justify-end">
               <div className="relative w-full max-w-sm lg:max-w-md h-[500px] lg:h-[600px] overflow-hidden rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent z-10 rounded-2xl"></div>
                 <img
                   src="/src/assets/banner2.jpg"
                   alt="New Balance Collection"
@@ -234,7 +234,7 @@ const Home = () => {
 
       {/* Newsletter Section */}
       <section className="relative bg-white py-24">
-        <div className="absolute inset-0 opacity-5 bg-gradient-to-r from-black via-transparent to-black"></div>
+        <div className="absolute inset-0 opacity-5 bg-linear-to-r from-black via-transparent to-black"></div>
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center space-y-8">
             <div className="space-y-3">
