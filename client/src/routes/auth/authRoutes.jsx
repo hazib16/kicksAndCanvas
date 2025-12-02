@@ -1,82 +1,82 @@
-import { Route } from 'react-router-dom';
-import PublicRoute from '../PublicRoute';
-import Login from '../../pages/User/Login';
-import SignUp from '../../pages/User/SignUp';
-import VerifySignupOTP from '../../pages/User/VerifySignupOTP';
-import ForgotPassword from '../../pages/User/ForgotPassword';
-import VerifyPasswordResetOTP from '../../pages/User/VerifyPasswordResetOTP';
-import ResetPassword from '../../pages/User/ResetPassword';
-import GoogleAuthSuccess from '../../pages/User/GoogleAuthSuccess';
+import { Route } from "react-router-dom";
+import PublicRoute from "../PublicRoute";
+import Login from "../../pages/User/Login";
+import SignUp from "../../pages/User/SignUp";
+import VerifySignupOTP from "../../pages/User/VerifySignupOTP";
+import ResetPassword from "../../pages/User/ResetPassword";
+import GoogleAuthSuccess from "../../pages/User/GoogleAuthSuccess";
+import ForgotPasswordForm from "../../components/forms/ForgotPasswordForm";
+import VerifyResetOtpForm from "../../components/forms/VerifyResetOtpForm";
 
 export const authRoutes = [
-  <Route 
+  <Route
     key="login"
-    path="/login" 
+    path="/login"
     element={
       <PublicRoute>
         <Login />
       </PublicRoute>
-    } 
+    }
   />,
-  
-  <Route 
+
+  <Route
     key="signup"
-    path="/signup" 
+    path="/signup"
     element={
       <PublicRoute>
         <SignUp />
       </PublicRoute>
-    } 
+    }
   />,
 
-  <Route 
+  <Route
     key="verify-signup-otp"
-    path="/verify-signup-otp" 
+    path="/verify-signup-otp"
     element={
       <PublicRoute>
         <VerifySignupOTP />
       </PublicRoute>
-    } 
-  />,
-  
-  <Route 
-    key="forgot-password"
-    path="/forgot-password" 
-    element={
-      <PublicRoute>
-        <ForgotPassword />
-      </PublicRoute>
-    } 
+    }
   />,
 
-  <Route 
-    key="verify-reset-otp"
-    path="/verify-reset-otp" 
+  <Route
+    key="forgot-password"
+    path="/forgot-password"
     element={
       <PublicRoute>
-        <VerifyPasswordResetOTP />
+        <ForgotPasswordForm />
       </PublicRoute>
-    } 
+    }
   />,
-  
-  <Route 
+
+  <Route
+    key="verify-reset-otp"
+    path="/verify-reset-otp"
+    element={
+      <PublicRoute>
+        <VerifyResetOtpForm />
+      </PublicRoute>
+    }
+  />,
+
+  <Route
     key="reset-password"
-    path="/reset-password/:token" 
+    path="/reset-password/:token"
     element={
       <PublicRoute>
         <ResetPassword />
       </PublicRoute>
-    } 
+    }
   />,
 
-  <Route 
+  <Route
     key="google-auth-success"
-    path="/auth/google/success" 
+    path="/auth/google/success"
     element={
       <PublicRoute>
         <GoogleAuthSuccess />
       </PublicRoute>
-    } 
+    }
   />,
 ];
 

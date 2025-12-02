@@ -15,6 +15,8 @@ const initialState = {
   otpPhase: false,
   userIdForOtp: null,
   otpError: null,
+  resetPasswordPhase: false, // NEW: Track password reset flow
+  userIdForReset: null, // NEW: Store userId for password reset
 };
 
 // ====== ASYNC THUNKS ======
@@ -83,6 +85,55 @@ export const resendOtpThunk = createAsyncThunk(
   async ({ userId }, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.post("/auth/resend-otp", { userId });
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to resend OTP"
+      );
+    }
+  }
+);
+
+// Async thunk: forgot password (send OTP)
+export const forgotPasswordThunk = createAsyncThunk(
+  "auth/forgotPassword",
+  async (email, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post("/auth/forgot-password", { email });
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to send OTP"
+      );
+    }
+  }
+);
+
+// Async thunk: verify OTP and reset password
+export const verifyResetOtpThunk = createAsyncThunk(
+  "auth/verifyResetOtp",
+  async ({ userId, otp, newPassword }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post("/auth/verify-reset-otp", {
+        userId,
+        otp,
+        newPassword,
+      });
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "OTP verification failed"
+      );
+    }
+  }
+);
+
+// Async thunk: resend reset OTP
+export const resendResetOtpThunk = createAsyncThunk(
+  "auth/resendResetOtp",
+  async ({ userId }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post("/auth/resend-reset-otp", { userId });
       return res.data;
     } catch (error) {
       return rejectWithValue(
@@ -272,6 +323,60 @@ const authSlice = createSlice({
         toast.error(action.payload || "Failed to resend OTP");
       })
 
+      // Forgot Password - Send OTP
+      .addCase(forgotPasswordThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(forgotPasswordThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.resetPasswordPhase = true;
+        state.userIdForReset = action.payload.userId;
+        toast.success("Password reset OTP sent to your email!");
+      })
+      .addCase(forgotPasswordThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.resetPasswordPhase = false;
+        state.userIdForReset = null;
+        toast.error(action.payload || "Failed to send OTP");
+      })
+
+      // Verify Reset OTP and Reset Password
+      .addCase(verifyResetOtpThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyResetOtpThunk.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+        state.resetPasswordPhase = false;
+        state.userIdForReset = null;
+        toast.success("Password reset successful! You can now login.");
+      })
+      .addCase(verifyResetOtpThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        toast.error(action.payload || "Password reset failed");
+      })
+
+      // Resend Reset OTP
+      .addCase(resendResetOtpThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resendResetOtpThunk.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+        toast.success("New password reset OTP sent!");
+      })
+      .addCase(resendResetOtpThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        toast.error(action.payload || "Failed to resend OTP");
+      })
+
       // Logout thunk
       .addCase(logoutUserThunk.pending, (state) => {
         state.loading = true;
@@ -347,3 +452,5 @@ export const selectAuthError = (state) => state.auth.error;
 export const selectOtpPhase = (state) => state.auth.otpPhase;
 export const selectUserIdForOtp = (state) => state.auth.userIdForOtp;
 export const selectOtpError = (state) => state.auth.otpError;
+export const selectResetPasswordPhase = (state) => state.auth.resetPasswordPhase; // NEW
+export const selectUserIdForReset = (state) => state.auth.userIdForReset; // NEW

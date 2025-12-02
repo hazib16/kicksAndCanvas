@@ -71,7 +71,7 @@ const LoginForm = () => {
         </div>
       )}
 
-      {/* Google Sign-In Button - No more 403 errors! */}
+      {/* Google Sign-In Button */}
       <div className="mb-6 flex justify-center">
         <GoogleLogin
           onSuccess={handleGoogleSuccess}
@@ -108,6 +108,16 @@ const LoginForm = () => {
           {...register("password")}
           error={errors.password?.message}
         />
+
+        {/* Forgot Password link */}
+        <div className="text-right -mt-2">
+          <a
+            href="/forgot-password"
+            className="text-sm text-gray-600 hover:text-black underline"
+          >
+            Forgot Password?
+          </a>
+        </div>
 
         <Button type="submit" fullWidth disabled={loading}>
           {loading ? "Logging in..." : "Log in"}
