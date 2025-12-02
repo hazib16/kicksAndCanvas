@@ -1,21 +1,23 @@
 import { Route } from 'react-router-dom';
 import AdminProtectedRoute from '../AdminProtectedRoute'; 
-import AdminDashboard from '../../pages/Admin/Dashboard.jsx';
+import AdminDashboard from '../../pages/Admin/Dashboard'
 import ProductManagement from '../../pages/Admin/ProductManagement';
 import OrderManagement from '../../pages/Admin/OrderManagement';
 import UserManagement from '../../pages/Admin/UserManagement';
-import AdminLoginForm from '../../pages/Admin/AdminLogin.jsx';
+import AdminLoginForm from '../../pages/Admin/AdminLogin';
 
 export const adminRoutes = [
+  // Public admin login route
   <Route
-  key="admin-login"
-  path='/admin/login'
-  element={<AdminLoginForm/>}
+    key="admin-login"
+    path="/admin/login"
+    element={<AdminLoginForm />}
   />,
 
+  // Protected admin routes
   <Route 
     key="admin-dashboard"
-    path="/admin" 
+    path="/admin/dashboard" 
     element={
       <AdminProtectedRoute>
         <AdminDashboard />
@@ -49,6 +51,17 @@ export const adminRoutes = [
     element={
       <AdminProtectedRoute>
         <UserManagement />
+      </AdminProtectedRoute>
+    } 
+  />,
+
+  // Redirect /admin to /admin/dashboard
+  <Route 
+    key="admin-root"
+    path="/admin" 
+    element={
+      <AdminProtectedRoute>
+        <AdminDashboard />
       </AdminProtectedRoute>
     } 
   />,

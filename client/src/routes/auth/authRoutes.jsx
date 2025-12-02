@@ -3,8 +3,6 @@ import PublicRoute from "../PublicRoute";
 import Login from "../../pages/User/Login";
 import SignUp from "../../pages/User/SignUp";
 import VerifySignupOTP from "../../pages/User/VerifySignupOTP";
-import ResetPassword from "../../pages/User/ResetPassword";
-import GoogleAuthSuccess from "../../pages/User/GoogleAuthSuccess";
 import ForgotPasswordForm from "../../components/forms/ForgotPasswordForm";
 import VerifyResetOtpForm from "../../components/forms/VerifyResetOtpForm";
 
@@ -55,26 +53,6 @@ export const authRoutes = [
     element={
       <PublicRoute>
         <VerifyResetOtpForm />
-      </PublicRoute>
-    }
-  />,
-
-  <Route
-    key="reset-password"
-    path="/reset-password/:token"
-    element={
-      <PublicRoute>
-        <ResetPassword />
-      </PublicRoute>
-    }
-  />,
-
-  <Route
-    key="google-auth-success"
-    path="/auth/google/success"
-    element={
-      <PublicRoute>
-        <GoogleAuthSuccess />
       </PublicRoute>
     }
   />,

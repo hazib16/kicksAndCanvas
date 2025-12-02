@@ -7,18 +7,19 @@ import OrderDetail from '../../pages/User/OrderDetail';
 import Cart from '../../pages/User/Cart';
 import Checkout from '../../pages/User/Checkout';
 import Wishlist from '../../pages/User/Wishlist';
+import AddressBook from '../../pages/User/AddressBook'; // Optional but recommended
 
 export const userRoutes = [
+  // ========== PUBLIC ROUTE ==========
+  // Home should NOT be protected - anyone can view
   <Route 
     key="home"
     path="/" 
-    element={
-      <ProtectedRoute>
-        <Home />
-      </ProtectedRoute>
-    } 
+    element={<Home />} 
   />,
   
+  // ========== PROTECTED ROUTES ==========
+  // Profile & Account Settings
   <Route 
     key="profile"
     path="/profile" 
@@ -29,6 +30,18 @@ export const userRoutes = [
     } 
   />,
   
+  // Wishlist
+  <Route 
+    key="wishlist"
+    path="/wishlist" 
+    element={
+      <ProtectedRoute>
+        <Wishlist />
+      </ProtectedRoute>
+    } 
+  />,
+  
+  // Cart - Keep protected (checkout requires login)
   <Route 
     key="cart"
     path="/cart" 
@@ -39,6 +52,7 @@ export const userRoutes = [
     } 
   />,
   
+  // Checkout
   <Route 
     key="checkout"
     path="/checkout" 
@@ -49,6 +63,7 @@ export const userRoutes = [
     } 
   />,
   
+  // Orders List
   <Route 
     key="orders"
     path="/orders" 
@@ -59,6 +74,7 @@ export const userRoutes = [
     } 
   />,
   
+  // Individual Order Detail
   <Route 
     key="order-detail"
     path="/orders/:id" 
@@ -69,12 +85,13 @@ export const userRoutes = [
     } 
   />,
   
+  // Address Book (Optional but recommended for e-commerce)
   <Route 
-    key="wishlist"
-    path="/wishlist" 
+    key="addresses"
+    path="/addresses" 
     element={
       <ProtectedRoute>
-        <Wishlist />
+        <AddressBook />
       </ProtectedRoute>
     } 
   />,

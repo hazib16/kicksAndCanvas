@@ -1,22 +1,23 @@
-import { useSelector } from "react-redux"
-import { selectIsAuthenticated, selectUser } from "../store/slices/authSlice"
-import { Navigate } from "react-router-dom"
+import { Navigate, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectIsAuthenticated, selectUser } from "../store/slices/authSlice";
 
+const AdminProtectedRoute = ({ children }) => {
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
+  const location = useLocation();
 
+  if (!isAuthenticated) {
+    // Redirect to admin login with return URL
+    return <Navigate to="/admin/login" state={{ from: location }} replace />;
+  }
 
-const AdminProtectedRoute= ({children})=>{
-    const isAuthenticated= useSelector(selectIsAuthenticated)
-    const user= useSelector(selectUser)
+  if (user?.role !== "admin") {
+    // Non-admin users get redirected to home
+    return <Navigate to="/" replace />;
+  }
 
-    if(!isAuthenticated){
-        return <Navigate to='/login' replace/>
-    }
+  return children;
+};
 
-    if(user?.role!=='admin'){
-        return <Navigate to='/' replace/>
-    }
-
-    return children
-}
-
-export default AdminProtectedRoute
+export default AdminProtectedRoute;

@@ -1,29 +1,29 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { logoutUserThunk, selectUser, selectIsAuthenticated } from '../../store/slices/authSlice';
-import ConfirmationModal from '../ui/ConfirmationModal'; // ← Add import
+import ConfirmationModal from '../ui/ConfirmationModal';
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false); // ← Add state
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const dropdownRef = useRef(null);
   
   const user = useSelector(selectUser);
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  // Add cart count selector (create this in your cartSlice if not exists)
+  // const cartCount = useSelector((state) => state.cart?.items?.length || 0);
 
-  const isAuthPage = ['/login', '/signup', '/forgot-password'].includes(location.pathname);
+  const isAuthPage = ['/login', '/signup', '/forgot-password', '/verify-signup-otp', '/verify-reset-otp'].includes(location.pathname);
 
-  // Updated logout handler - shows confirmation modal
   const handleLogoutClick = () => {
     setIsDropdownOpen(false);
-    setShowLogoutModal(true); // ← Show modal instead of alert
+    setShowLogoutModal(true);
   };
 
-  // Actual logout after confirmation
   const handleLogoutConfirm = () => {
     dispatch(logoutUserThunk());
     navigate('/login', { replace: true });
@@ -50,42 +50,42 @@ const Header = () => {
       </div>
 
       {/* Navigation Bar */}
-      <nav className="bg-white shadow-md">
+      <nav className="bg-white shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <div 
-              className="flex items-center cursor-pointer hover:opacity-80 transition-opacity" 
-              onClick={() => navigate('/')}
-            >
+            <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
               <img 
                 src="/src/assets/kicksandcanvas_final.png" 
                 alt="KICKS AND CANVAS" 
                 className="h-10 w-15"
               />
-            </div>
+            </Link>
 
             {/* Navigation Links */}
             <div className="hidden md:flex space-x-8">
-              <a href="/" className="text-gray-700 hover:text-black font-medium transition-colors">
+              <Link to="/" className="text-gray-700 hover:text-black font-medium transition-colors">
                 Home
-              </a>
-              <a href="/collection" className="text-gray-700 hover:text-black font-medium transition-colors">
-                Collection
-              </a>
-              <a href="/about" className="text-gray-700 hover:text-black font-medium transition-colors">
+              </Link>
+              <Link to="/products" className="text-gray-700 hover:text-black font-medium transition-colors">
+                Products
+              </Link>
+              <Link to="/about" className="text-gray-700 hover:text-black font-medium transition-colors">
                 About
-              </a>
-              <a href="/contact" className="text-gray-700 hover:text-black font-medium transition-colors">
+              </Link>
+              <Link to="/contact" className="text-gray-700 hover:text-black font-medium transition-colors">
                 Contact
-              </a>
+              </Link>
             </div>
 
             {/* Icons - Right Side */}
             <div className="flex items-center space-x-4">
               {/* Search Icon */}
               {!isAuthPage && (
-                <button className="text-gray-700 hover:text-black transition-colors p-2 hover:bg-gray-100 rounded-lg">
+                <Link 
+                  to="/search"
+                  className="text-gray-700 hover:text-black transition-colors p-2 hover:bg-gray-100 rounded-lg"
+                >
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -99,14 +99,14 @@ const Header = () => {
                       d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                     />
                   </svg>
-                </button>
+                </Link>
               )}
 
-              {/* Cart Icon */}
-              {isAuthenticated && !isAuthPage && (
-                <button 
-                  onClick={() => navigate('/cart')}
-                  className="text-gray-700 hover:text-black transition-colors p-2 hover:bg-gray-100 rounded-lg"
+              {/* Cart Icon - Show for both authenticated and non-authenticated */}
+              {!isAuthPage && (
+                <Link 
+                  to="/cart"
+                  className="text-gray-700 hover:text-black transition-colors p-2 hover:bg-gray-100 rounded-lg relative"
                 >
                   <svg
                     className="w-5 h-5"
@@ -121,7 +121,13 @@ const Header = () => {
                       d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                     />
                   </svg>
-                </button>
+                  {/* Cart Badge - Uncomment when cart selector is ready */}
+                  {/* {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )} */}
+                </Link>
               )}
 
               {/* User Profile Dropdown */}
@@ -155,7 +161,7 @@ const Header = () => {
                         <p className="text-sm font-semibold text-gray-900">
                           Hi, {user?.name || 'User'}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-gray-500 mt-1 truncate">
                           {user?.email}
                         </p>
                       </div>
@@ -163,31 +169,36 @@ const Header = () => {
                       {/* Menu Items */}
                       <div className="py-2">
                         {/* My Profile */}
-                        <button
-                          onClick={() => {
-                            navigate('/profile');
-                            setIsDropdownOpen(false);
-                          }}
-                          className="w-full text-left px-5 py-3 text-gray-700 hover:bg-gray-100 transition-colors font-medium text-sm"
+                        <Link
+                          to="/profile"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="block w-full text-left px-5 py-3 text-gray-700 hover:bg-gray-100 transition-colors font-medium text-sm"
                         >
                           My Profile
-                        </button>
+                        </Link>
 
                         {/* Orders */}
-                        <button
-                          onClick={() => {
-                            navigate('/orders');
-                            setIsDropdownOpen(false);
-                          }}
-                          className="w-full text-left px-5 py-3 text-gray-700 hover:bg-gray-100 transition-colors font-medium text-sm"
+                        <Link
+                          to="/orders"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="block w-full text-left px-5 py-3 text-gray-700 hover:bg-gray-100 transition-colors font-medium text-sm"
                         >
                           My Orders
-                        </button>
+                        </Link>
+
+                        {/* Wishlist */}
+                        <Link
+                          to="/wishlist"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="block w-full text-left px-5 py-3 text-gray-700 hover:bg-gray-100 transition-colors font-medium text-sm"
+                        >
+                          My Wishlist
+                        </Link>
 
                         {/* Divider */}
                         <div className="border-t border-gray-200 my-2"></div>
 
-                        {/* Logout - Updated to show modal */}
+                        {/* Logout */}
                         <button
                           onClick={handleLogoutClick}
                           className="w-full text-left px-5 py-3 text-red-600 hover:bg-red-50 transition-colors font-semibold text-sm"
@@ -200,14 +211,32 @@ const Header = () => {
                 </div>
               )}
 
+              {/* Login/Signup Buttons - Show when not authenticated */}
+              {!isAuthenticated && !isAuthPage && (
+                <div className="flex items-center space-x-2">
+                  <Link
+                    to="/login"
+                    className="px-4 py-2 text-gray-700 hover:text-black transition-colors font-medium text-sm"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 font-medium text-sm shadow-md hover:shadow-lg"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+
               {/* On Auth Pages - Login/Signup Toggle */}
               {!isAuthenticated && isAuthPage && (
-                <button
-                  onClick={() => navigate(location.pathname === '/login' ? '/signup' : '/login')}
+                <Link
+                  to={location.pathname === '/login' ? '/signup' : '/login'}
                   className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 font-medium text-sm shadow-md hover:shadow-lg"
                 >
                   {location.pathname === '/login' ? 'Sign Up' : 'Login'}
-                </button>
+                </Link>
               )}
             </div>
           </div>
