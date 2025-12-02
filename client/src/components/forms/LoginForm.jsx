@@ -53,7 +53,6 @@ const LoginForm = () => {
     dispatch(loginUserThunk(data));
   };
 
-  // Handle Google Sign-In
   const handleGoogleSuccess = (credentialResponse) => {
     dispatch(googleAuthThunk(credentialResponse));
   };
@@ -72,16 +71,17 @@ const LoginForm = () => {
         </div>
       )}
 
-      {/* Google Sign-In Button */}
-      <div className="mb-6">
-  <GoogleLogin
-    onSuccess={handleGoogleSuccess}
-    onError={handleGoogleError}
-    useOneTap
-    theme="outline"
-    size="large"
-  />
-</div>
+      {/* Google Sign-In Button - No more 403 errors! */}
+      <div className="mb-6 flex justify-center">
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={handleGoogleError}
+          useOneTap={false}
+          auto_select={false}
+          theme="outline"
+          size="large"
+        />
+      </div>
 
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center">

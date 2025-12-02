@@ -11,6 +11,7 @@ import {
   selectAuthLoading,
   selectAuthError,
   selectOtpPhase,
+  selectIsAuthenticated,
 } from "../../store/slices/authSlice";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
@@ -23,6 +24,7 @@ const SignUpForm = () => {
   const loading = useSelector(selectAuthLoading);
   const error = useSelector(selectAuthError);
   const otpPhase = useSelector(selectOtpPhase);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
 
   // React Hook Form with Zod validation
   const {
@@ -49,6 +51,13 @@ const SignUpForm = () => {
     }
   }, [otpPhase, navigate]);
 
+  // Navigate to home if already authenticated (Google sign-in)
+  useEffect(() => {
+    if (isAuthenticated && !otpPhase) {
+      navigate("/", { replace: true });
+    }
+  }, [isAuthenticated, otpPhase, navigate]);
+
   const onSubmit = (data) => {
     const { confirmPassword, ...signupData } = data;
     dispatch(signupUserThunk(signupData));
@@ -73,11 +82,13 @@ const SignUpForm = () => {
         </div>
       )}
 
-      {/* Google Sign-In Button */}
-      <div className="mb-6">
+      {/* Google Sign-In Button - No more 403 errors! */}
+      <div className="mb-6 flex justify-center">
         <GoogleLogin
           onSuccess={handleGoogleSuccess}
           onError={handleGoogleError}
+          useOneTap={false}
+          auto_select={false}
           theme="outline"
           size="large"
           text="signup_with"
@@ -89,7 +100,7 @@ const SignUpForm = () => {
           <div className="w-full border-t border-gray-300"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-gray-50 text-gray-500">OR</span>
+          <span className="px-2 bg-white text-gray-500">OR</span>
         </div>
       </div>
 
