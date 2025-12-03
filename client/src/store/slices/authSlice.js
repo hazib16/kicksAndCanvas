@@ -2,21 +2,24 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../api/axiosInstance";
 import toast from 'react-hot-toast';
 
-// Try loading user from localStorage on app start
+// Try loading user and token from localStorage on app start
 const userFromStorage = localStorage.getItem("user")
   ? JSON.parse(localStorage.getItem("user"))
   : null;
 
+const accessTokenFromStorage = localStorage.getItem("accessToken") || null;
+
 const initialState = {
   user: userFromStorage,
+  accessToken: accessTokenFromStorage,
   isAuthenticated: !!userFromStorage,
   loading: false,
   error: null,
   otpPhase: false,
   userIdForOtp: null,
   otpError: null,
-  resetPasswordPhase: false, // NEW: Track password reset flow
-  userIdForReset: null, // NEW: Store userId for password reset
+  resetPasswordPhase: false,
+  userIdForReset: null,
 };
 
 // ====== ASYNC THUNKS ======
@@ -27,7 +30,7 @@ export const loginUserThunk = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.post("/auth/login", credentials);
-      return res.data.user;
+      return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Login failed");
     }
@@ -55,7 +58,7 @@ export const googleAuthThunk = createAsyncThunk(
       const res = await axiosInstance.post("/auth/google-signin", {
         credential: credentialResponse.credential,
       });
-      return res.data.user;
+      return res.data;
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || "Google authentication failed"
@@ -178,7 +181,7 @@ export const adminLoginThunk = createAsyncThunk(
       if (res.data.user?.role !== "admin") {
         return rejectWithValue("Access denied. Admin credentials required.");
       }
-      return res.data.user;
+      return res.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Admin login failed"
@@ -209,9 +212,11 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       state.user = null;
+      state.accessToken = null;
       state.isAuthenticated = false;
       state.loading = false;
       localStorage.removeItem("user");
+      localStorage.removeItem("accessToken");
       toast.success("Logged out successfully");
     },
     setLoading: (state, action) => {
@@ -226,19 +231,23 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUserThunk.fulfilled, (state, action) => {
-        state.user = action.payload;
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
         state.isAuthenticated = true;
         state.loading = false;
         state.error = null;
-        localStorage.setItem("user", JSON.stringify(action.payload));
-        toast.success(`Welcome back, ${action.payload.name}!`);
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("accessToken", action.payload.accessToken);
+        toast.success(`Welcome back, ${action.payload.user.name}!`);
       })
       .addCase(loginUserThunk.rejected, (state, action) => {
         state.user = null;
+        state.accessToken = null;
         state.isAuthenticated = false;
         state.loading = false;
         state.error = action.payload;
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
         toast.error(action.payload || "Login failed");
       })
 
@@ -256,6 +265,7 @@ const authSlice = createSlice({
       })
       .addCase(signupUserThunk.rejected, (state, action) => {
         state.user = null;
+        state.accessToken = null;
         state.isAuthenticated = false;
         state.loading = false;
         state.error = action.payload;
@@ -270,19 +280,23 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(googleAuthThunk.fulfilled, (state, action) => {
-        state.user = action.payload;
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
         state.isAuthenticated = true;
         state.loading = false;
         state.error = null;
-        localStorage.setItem("user", JSON.stringify(action.payload));
-        toast.success(`Welcome, ${action.payload.name}!`);
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("accessToken", action.payload.accessToken);
+        toast.success(`Welcome, ${action.payload.user.name}!`);
       })
       .addCase(googleAuthThunk.rejected, (state, action) => {
         state.user = null;
+        state.accessToken = null;
         state.isAuthenticated = false;
         state.loading = false;
         state.error = action.payload;
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
         toast.error(action.payload || "Google sign-in failed");
       })
 
@@ -297,8 +311,10 @@ const authSlice = createSlice({
         state.otpPhase = false;
         state.userIdForOtp = null;
         state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
         state.isAuthenticated = true;
         localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("accessToken", action.payload.accessToken);
         toast.success("Account verified successfully! Welcome!");
       })
       .addCase(verifyOtpThunk.rejected, (state, action) => {
@@ -383,17 +399,21 @@ const authSlice = createSlice({
       })
       .addCase(logoutUserThunk.fulfilled, (state) => {
         state.user = null;
+        state.accessToken = null;
         state.isAuthenticated = false;
         state.loading = false;
         state.error = null;
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
         toast.success("Logged out successfully");
       })
       .addCase(logoutUserThunk.rejected, (state) => {
         state.user = null;
+        state.accessToken = null;
         state.isAuthenticated = false;
         state.loading = false;
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
         toast.error("Logout failed, but you've been logged out locally");
       })
 
@@ -410,10 +430,12 @@ const authSlice = createSlice({
       })
       .addCase(fetchCurrentUserThunk.rejected, (state) => {
         state.user = null;
+        state.accessToken = null;
         state.isAuthenticated = false;
         state.loading = false;
         state.error = null;
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
       })
 
       // Admin login
@@ -422,19 +444,23 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(adminLoginThunk.fulfilled, (state, action) => {
-        state.user = action.payload;
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
         state.isAuthenticated = true;
         state.loading = false;
         state.error = null;
-        localStorage.setItem("user", JSON.stringify(action.payload));
-        toast.success(`Welcome, ${action.payload.name}!`);
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("accessToken", action.payload.accessToken);
+        toast.success(`Welcome, ${action.payload.user.name}!`);
       })
       .addCase(adminLoginThunk.rejected, (state, action) => {
         state.user = null;
+        state.accessToken = null;
         state.isAuthenticated = false;
         state.loading = false;
         state.error = action.payload;
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
         toast.error(action.payload || "Admin login failed");
       });
   },
@@ -449,8 +475,9 @@ export const selectUser = (state) => state.auth.user;
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 export const selectAuthLoading = (state) => state.auth.loading;
 export const selectAuthError = (state) => state.auth.error;
+export const selectAccessToken = (state) => state.auth.accessToken;
 export const selectOtpPhase = (state) => state.auth.otpPhase;
 export const selectUserIdForOtp = (state) => state.auth.userIdForOtp;
 export const selectOtpError = (state) => state.auth.otpError;
-export const selectResetPasswordPhase = (state) => state.auth.resetPasswordPhase; // NEW
-export const selectUserIdForReset = (state) => state.auth.userIdForReset; // NEW
+export const selectResetPasswordPhase = (state) => state.auth.resetPasswordPhase;
+export const selectUserIdForReset = (state) => state.auth.userIdForReset;
