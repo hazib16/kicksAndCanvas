@@ -9,6 +9,7 @@ import morgan from "morgan";
 
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import userRoutes from "./routes/userRoutes.js"; 
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",  
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
   })
 );
@@ -28,10 +29,11 @@ app.use(
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes); 
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`server running successfully on http://localhost:${PORT}`);
+  console.log(`Server running successfully on http://localhost:${PORT}`);
 });
 
 export default app;

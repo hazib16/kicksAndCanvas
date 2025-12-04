@@ -51,7 +51,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-black px-4">
       {/* Background Blobs */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
@@ -136,7 +136,7 @@ const AdminLogin = () => {
             <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-md">
               <div className="flex items-center">
                 <svg
-                  className="h-5 w-5 text-red-500 mr-2 flex-shrink-0"
+                  className="h-5 w-5 text-red-500 mr-2 shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -234,7 +234,7 @@ const AdminLogin = () => {
             <div className="flex items-start space-x-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5"
+                className="h-5 w-5 text-gray-400 shrink-0 mt-0.5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
